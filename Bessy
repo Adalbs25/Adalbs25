@@ -1,0 +1,116 @@
+:- dynamic duda_possui/1.
+:- dynamic local_duda/1.
+
+duda_possui(nada).
+local_duda(patio).
+
+acessivel(patio, lagoa) :- write("A �gua bate em seus p�s e uma sensa��o leve emerge em seu corpo!"), nl.
+acessivel(patio, floresta) :- write("Cuidado com os arbustos!"), nl.
+acessivel(patio, casa) :- write("Est� no ar o cheiro doce e de longe observa-se guloseimas na janela!"), nl.
+acessivel(patio, galinheiro) :- write("O cheiro de palha e galinhas est� no ar, as outras galinhas est�o a espera de Bessy!"), nl.
+acessivel(lagoa, patio) :- write("Com o corpo molhado, voc� deixou rastros com as suas pegadas!"), nl.
+acessivel(floresta, patio) :- write("Com uns galhos e folhas na cabe�a, voc� saiu da floresta!"), nl.
+acessivel(casa, patio) :- write("Com guloseimas na m�o para se fortalecer, voc� deixa a casa de dona Lurdes!"), nl.
+acessivel(galinheiro, patio) :- write("Duda saiu do galinheiro, por�m com palha e penas pelo seu corpo."), nl.
+
+ir_para(X) :-
+    local_duda(Y),
+    acessivel(Y, X),
+    retract(local_duda(Y)), assert(local_duda(X)),
+    write("Voc� andou para: "), write(X), nl.
+ir_para(X) :-
+    local_duda(Y),
+    not(acessivel(Y,X)),
+    (Y==lagoa; Y==casa; Y==floresta; Y==galinheiro),
+    (X==lagoa; X==casa; X==floresta; X==galinheiro),
+    write("O local "), write(X), write("n�o � acess�vel. V� para o p�tio!"), nl.
+ir_para(X) :-
+    local_duda(Y),
+    Y==X,
+    write("Voc� j� est� no local "), write(X), write("!").
+ir_para(X) :-
+    local_duda(Y),
+    not(acessivel(Y, X)),
+    write("O local "), write(X), write(" n�o � dispon�vel. Tente um lugar acess�vel!"), nl.
+
+pegar(X) :-
+    local_duda(Y), Y==lagoa,
+    X==banho,
+    assert(duda_possui(X)),
+    write("Agora voc� est� cheirosa!"), nl, write("Voc� tomou banho :)"), nl.
+pegar(X) :-
+    local_duda(Y), Y\==lagoa,
+    X==banho,
+    write("Voc� n�o pode tomar banho aqui("), write(Y), write("). V� para a lagoa!"), nl.
+pegar(X) :-
+    local_duda(Y), Y==casa,
+    duda_possui(banho),
+    X==rede,
+    assert(duda_possui(X)),
+    write("Perfeito, agora voc� est� pronta para a a��o. V� atr�s da Bessy!"), nl,
+    write("Voc� pegou a rede!"), nl.
+pegar(X) :-
+    local_duda(Y), Y==casa,
+    duda_possui(W), W\==banho,
+    (X==rede; X\== rede),
+    write("Que pena, a dona Lurdes n�o permite que entrem com o p� sujo na casa."), nl,
+    write("V� at� a lagoa para tomar banho!"), nl.
+pegar(X) :-
+    local_duda(Y), Y\==casa,
+    duda_possui(banho),
+    X==rede,
+    write("Voc� n�o pode pegar a "), write(X), write(" nesse local. V� para a casa da dona Lurdes!"), nl.
+pegar(X) :-
+    local_duda(Y), Y\==casa,
+    X==rede,
+    write("A rede n�o est� nesse local!"), nl.
+pegar(X) :-
+    local_duda(Y), Y==floresta,
+    X==bessy,
+    write("Bessy desvia-se de forma lend�ria de suas tentativas para pega-l�, por�m a sua persist�ncia, dessa vez, superou a agilidade da ferra, bom trabalho!"), nl,
+    assert(duda_possui(X)),
+    write("A ferra indom�vel est� em suas m�os. Duda pegou a Bessy!"), nl.
+pegar(X) :-
+    local_duda(Y), Y\==floresta,
+    duda_possui(rede),
+    X==bessy,
+    write("Bessy n�o est� aqui("), write(Y),
+    write(").V� para a floresta!"), nl.
+pegar(X) :-
+    local_duda(Y), Y\==floresta,
+    X==bessy,
+    write("").
+pegar(X) :-
+    X\==banho;
+    X\==rede;
+    X\==bessy;
+    write(X), write(" n�o � um item dispon�vel"), nl.
+
+finalizado :-
+    local_duda(X), X==galinheiro,
+    duda_possui(bessy),
+    nl, write("Parab�ns! Voc� conseguiu salvar a Bessy da floresta, dona Lurdes lhe agradece e diz que h� um homem a sua espera no p�tio :)"), nl,
+    write("Caso queria aceitar a miss�o, digite 'aceito' e caso n�o queira digite 'descansar', por�m se n�o quiser aceitar, dona Lurdes compreende seu esfor�o em pegar a Bessy!"), nl.
+
+rodar :- finalizado.
+rodar :- read(X), call(X), rodar.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
